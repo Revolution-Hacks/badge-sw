@@ -1,3 +1,7 @@
 [submodule "external/pimoroni-pico"]
 	path = external/pimoroni-pico
 	url = https://github.com/pimoroni/pimoroni-pico
+[submodule "external/FreeRTOS"]
+	path = external/FreeRTOS
+	url = https://github.com/FreeRTOS/FreeRTOS-Kernel
+	branch = smp
