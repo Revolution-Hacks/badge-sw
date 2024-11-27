@@ -32,9 +32,6 @@ include(pico_sdk_import.cmake)
 set(PIMORONI_PICO_PATH "../external/pimoroni-pico")
 include(pimoroni_pico_import.cmake)
 
-# Pull in FreeRTOS
-include(external/FreeRTOS/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
-
 project(badge-sw C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
@@ -55,13 +52,11 @@ pico_set_program_version(badge-sw "0.1")
 
 # Modify the below lines to enable/disable output over UART/USB
 pico_enable_stdio_uart(badge-sw 0)
-pico_enable_stdio_usb(badge-sw 0)
+pico_enable_stdio_usb(badge-sw 1)
 
 # Add the standard library to the build
 target_link_libraries(badge-sw
         pico_stdlib
-        FreeRTOS-Kernel
-        FreeRTOS-Kernel-Heap4
     )
 
 # Add the standard include files to the build
@@ -71,6 +66,7 @@ target_include_directories(badge-sw PRIVATE
 
 target_sources(badge-sw PRIVATE
     src/main.cpp
+    src/images/Revolution-logo.h
 )
 
 # Add any user requested libraries
