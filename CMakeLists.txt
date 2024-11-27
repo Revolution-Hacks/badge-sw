@@ -27,15 +27,20 @@ set(PICO_BOARD pico CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
+
+# Pull in Pimoroni Pico SDK
 set(PIMORONI_PICO_PATH "../external/pimoroni-pico")
 include(pimoroni_pico_import.cmake)
+
+# Pull in FreeRTOS
+include(external/FreeRTOS/portable/ThirdParty/GCC/RP2040/FreeRTOS_Kernel_import.cmake)
 
 project(badge-sw C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Pimoroni imports
+# Pimoroni library imports
 include(libraries/hershey_fonts/hershey_fonts)
 include(libraries/pico_graphics/pico_graphics)
 include(common/pimoroni_bus)
@@ -43,7 +48,7 @@ include(drivers/uc8151/uc8151)
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(badge-sw main.cpp )
+add_executable(badge-sw src/main.cpp )
 
 pico_set_program_name(badge-sw "revolution-badge")
 pico_set_program_version(badge-sw "0.1")
@@ -54,7 +59,10 @@ pico_enable_stdio_usb(badge-sw 0)
 
 # Add the standard library to the build
 target_link_libraries(badge-sw
-        pico_stdlib)
+        pico_stdlib
+        FreeRTOS-Kernel
+        FreeRTOS-Kernel-Heap4
+    )
 
 # Add the standard include files to the build
 target_include_directories(badge-sw PRIVATE
@@ -62,7 +70,7 @@ target_include_directories(badge-sw PRIVATE
 )
 
 target_sources(badge-sw PRIVATE
-    main.cpp
+    src/main.cpp
 )
 
 # Add any user requested libraries

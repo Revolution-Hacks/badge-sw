@@ -4,6 +4,7 @@
 #include "pico_graphics.hpp"
 #include "uc8151.hpp"
 
+
 // SPI Defines
 // We are going to use SPI 0, and allocate it to the following GPIO pins
 // Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
@@ -35,6 +36,7 @@ int main()
     graphics.set_pen(0);
     pimoroni::Rect bg(296, 128, 296, 128);
     graphics.rectangle(bg);
+    graphics.text("Hello World!", pimoroni::Point(1, 1), 12, 2);
     //
     uc8151.update(&graphics);
 
