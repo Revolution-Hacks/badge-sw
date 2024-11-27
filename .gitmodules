@@ -4,3 +4,4 @@
 [submodule "external/FreeRTOS"]
 	path = external/FreeRTOS
 	url = https://github.com/FreeRTOS/FreeRTOS-Kernel
+	branch = main
