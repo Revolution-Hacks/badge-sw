@@ -30,44 +30,26 @@ int main()
     gpio_set_dir(PIN_CS, GPIO_OUT);
     gpio_put(PIN_CS, 1);
 
-    // Initialize display
-    int bytes_per_row = (uc8151.width + 7) / 8;
-
-    // Clear display buffer first
-    graphics.clear();
-
-    // Render image using the provided algorithm
-    uint8_t* buffer = new uint8_t[(296 * 128) / 8];
-    uint8_t* ptr = buffer;
-
-    for (uint32_t x = 0; x < 296; ++x) {
-        uint32_t bm = 0b10000000 >> (x & 0b111);
-        
-        for (uint32_t y = 0; y < 128; y += 8) {
-            uint8_t val = 0;
-            for (uint32_t cy = 0; cy < 8; ++cy) {
-                uint32_t o = ((y + cy) * (296 >> 3)) + (x >> 3);
-                if (revolution_logo_data[o] & bm) {
-                    val |= 0b10000000 >> cy;
-                }
-            }
-            *ptr++ = val;
-        }
-    }
-
-    // Convert buffer to display pixels
+    int bytes_per_row = (uc8151.width + 7) / 8;  // Round up division
     for (int y = 0; y < uc8151.height; y++) {
         for (int x = 0; x < uc8151.width; x++) {
-            int byte_index = (y >> 3) * uc8151.width + x;
-            int bit_index = y & 0b111;
-            bool pixel_on = (buffer[byte_index] >> bit_index) & 0x01;
-            graphics.set_pen(pixel_on);
-            graphics.set_pixel(pimoroni::Point(x,y));
+        int byte_index = y * bytes_per_row + (x / 8);
+        int bit_index = 7 - (x % 8);  // MSB first, matching Python converter
+
+        // Get the bit value and invert it (0xFF in data means white)
+        uint8_t byte = revolution_logo_data[byte_index];
+        bool pixel_on = (byte & (1 << bit_index)) == 0;
+        
+        // 1 = black, 0 = white for the display
+        graphics.set_pen(pixel_on ? 1 : 0);
+        graphics.set_pixel(pimoroni::Point(x,y));
         }
     }
-
-    delete[] buffer;
     uc8151.update(&graphics);
+    sleep_ms(3000);
+    graphics.clear();
+    uc8151.update(&graphics);
+
     while (true) {
         printf("Hello, world!\n");
         sleep_ms(1000);
