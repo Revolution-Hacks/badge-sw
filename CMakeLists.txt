@@ -39,6 +39,7 @@ pico_sdk_init()
 
 # Pimoroni library imports
 include(libraries/hershey_fonts/hershey_fonts)
+include(libraries/bitmap_fonts/bitmap_fonts)
 include(libraries/pico_graphics/pico_graphics)
 include(common/pimoroni_bus)
 include(drivers/uc8151/uc8151)
@@ -66,7 +67,10 @@ target_include_directories(badge-sw PRIVATE
 
 target_sources(badge-sw PRIVATE
     src/main.cpp
-    src/images/Revolution-logo.h
+    src/launcher.cpp
+    src/lib/display.cpp
+    src/assets/Revolution-logo.h
+    src/assets/DM-SemiBold-75.hpp
 )
 
 # Add any user requested libraries

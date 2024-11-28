@@ -6,13 +6,15 @@ def convert_to_monochrome(input_file, output_file, width, height):
     try:
         # Open the image
         img = Image.open(input_file)
-        # Convert the image to 1-bit monochrome
-        img = img.convert("1")  # "1" mode is 1-bit pixels, black and white
-        img = img.point(lambda p: 255 if p > 128 else 0, "1")
+        img = img.resize((width, height), Image.Resampling.BOX)
+        thresh = 200
+        fn = lambda x : 255 if x > thresh else 0
+        img = img.convert('L').point(fn, mode='1')
+        img.save("preview.png")
         # Create a byte array to store the image data
         bytes_per_row = (width + 7) // 8  # Calculate bytes per row (1 bit per pixel, rounded up)
         bitmap_data = bytearray(bytes_per_row * height)
-        normalised_bitmap_data = bytearray(bytes_per_row * height)
+
 
         # Populate the byte array
         for y in range(height):
@@ -20,6 +22,7 @@ def convert_to_monochrome(input_file, output_file, width, height):
                 # Get pixel value (0 = black, 255 = white)
                 pixel = img.getpixel((x, y))
                 # If pixel is black (0), set the corresponding bit
+                print(pixel, end="")
                 if pixel == 0:
                     byte_index = y * bytes_per_row + (x // 8)
                     bit_index = 7 - (x % 8)
