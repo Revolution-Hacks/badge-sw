@@ -1,3 +1,6 @@
 [submodule "external/pimoroni-pico"]
 	path = external/pimoroni-pico
 	url = https://github.com/pimoroni/pimoroni-pico
+[submodule "external/JerryScript"]
+	path = external/JerryScript
+	url = https://github.com/jerryscript-project/jerryscript.git

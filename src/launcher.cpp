@@ -1,19 +1,8 @@
 #include "pico_graphics.hpp"
 #include "uc8151.hpp"
-#include "assets/DM-SemiBold-75.hpp"
 
 namespace Launcher {
     void launcher_draw_box(pimoroni::PicoGraphics_Pen1BitY graphics, std::string title, bool active) {
-        //
-        if (active) {
-            pimoroni::Rect bg(50, 40, 75, 25);
-            bg.inflate(1);
-            graphics.set_pen(1);
-            graphics.rectangle(bg);
-            bg.deflate(1);
-            graphics.set_pen(0);
-            graphics.rectangle(bg);
-        }
         graphics.text(title, pimoroni::Point(50, 50), 10, 2);
     }
     void init_display(pimoroni::UC8151 uc8151, pimoroni::PicoGraphics_Pen1BitY graphics) {

@@ -23,6 +23,7 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
+
 set(PICO_BOARD pico CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
@@ -63,6 +64,7 @@ target_link_libraries(badge-sw
 # Add the standard include files to the build
 target_include_directories(badge-sw PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
+  jerryscript_install/include
 )
 
 target_sources(badge-sw PRIVATE
@@ -78,7 +80,11 @@ target_link_libraries(badge-sw
         hardware_spi
         uc8151
         pico_graphics
+#        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-core.a"
+#        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-ext.a"
+#        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-port.a"
     )
+
 
 pico_add_extra_outputs(badge-sw)
 
