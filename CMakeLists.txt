@@ -35,6 +35,9 @@ include(pimoroni_pico_import.cmake)
 
 project(badge-sw C CXX ASM)
 
+# Set up compile definitions
+add_compile_definitions(PICO_FLASH_SIZE_BYTES=1048576)
+
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
@@ -80,9 +83,9 @@ target_link_libraries(badge-sw
         hardware_spi
         uc8151
         pico_graphics
-#        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-core.a"
-#        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-ext.a"
-#        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-port.a"
+        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-core.a"
+        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-ext.a"
+        "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-port-default.a"
     )
 
 

@@ -5,6 +5,7 @@
 #include "uc8151.hpp"
 #include "lib/display.hpp"
 #include "launcer.hpp"
+#include "jerryscript.h"
 
 
 // SPI Defines
@@ -30,23 +31,8 @@ int main()
     gpio_set_function(PIN_MOSI, GPIO_FUNC_SPI);
     gpio_set_dir(PIN_CS, GPIO_OUT);
     gpio_put(PIN_CS, 1);
-
     // Do display init graphic
     init_display(uc8151, graphics);
-
-    // Init engine
-/*     engine_init();
-    const jerry_char_t script[] = "var str = 'Hello, World!';";
-    const jerry_length_t script_size = sizeof (script) - 1;
-    jerry_value_t eval_ret = jerry_eval (script,
-                                       script_size,
-                                        JERRY_PARSE_NO_OPTS);
-
-    /* Check if there was any error (syntax or runtime) */
-    // bool run_ok = !jerry_value_is_exception (eval_ret);
-
-    /* Parsed source code must be freed */
-    // jerry_value_free (eval_ret);
     // Load launcher
     Launcher::launcher_init(uc8151, graphics);
     while (true) {
