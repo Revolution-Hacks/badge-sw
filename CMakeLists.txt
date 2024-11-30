@@ -31,12 +31,13 @@ include(pico_sdk_import.cmake)
 
 # Pull in Pimoroni Pico SDK
 set(PIMORONI_PICO_PATH "../external/pimoroni-pico")
-include(pimoroni_pico_import.cmake)
+include(cmake/pimoroni_pico_import.cmake)
 
 project(badge-sw C CXX ASM)
 
 # Set up compile definitions
 add_compile_definitions(PICO_FLASH_SIZE_BYTES=1048576)
+add_compile_definitions(PICO)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -47,6 +48,8 @@ include(libraries/bitmap_fonts/bitmap_fonts)
 include(libraries/pico_graphics/pico_graphics)
 include(common/pimoroni_bus)
 include(drivers/uc8151/uc8151)
+
+include(cmake/littlefs.cmake)
 
 # Add executable. Default name is the project name, version 0.1
 
@@ -62,25 +65,30 @@ pico_enable_stdio_usb(badge-sw 1)
 # Add the standard library to the build
 target_link_libraries(badge-sw
         pico_stdlib
+        littlefs
     )
 
 # Add the standard include files to the build
 target_include_directories(badge-sw PRIVATE
   ${CMAKE_CURRENT_LIST_DIR}
   jerryscript_install/include
+  external/littlefs
 )
 
 target_sources(badge-sw PRIVATE
     src/main.cpp
     src/launcher.cpp
     src/lib/display.cpp
+    src/lib/fs.c
     src/assets/Revolution-logo.h
     src/assets/DM-SemiBold-75.hpp
+
 )
 
 # Add any user requested libraries
 target_link_libraries(badge-sw 
         hardware_spi
+        hardware_flash
         uc8151
         pico_graphics
         "${CMAKE_CURRENT_SOURCE_DIR}/jerryscript_install/lib/libjerry-core.a"

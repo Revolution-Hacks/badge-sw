@@ -11,8 +11,7 @@ Should be compatible with any RP2040 based Pimoroni Badger board
 
 ## Building
 First, open the project using VSCode with the Raspberry Pi Pico extension installed
-2. Clone the submodules (`git submodule update --init --recursive`)
+2. Clone the submodules (`git submodule update --init`)
 3. Build Jerryscript (`tools/jerryscript-build.sh`) MUST BE RAN ON LINUX/MACOS/THROUGH WSL
-3. Configure CMAKE
-4. Build
+4. Build using the extension
 5. Flash (put board into bootsel and then copy the uf2 from the build/ folder to it)

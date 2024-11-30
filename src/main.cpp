@@ -6,6 +6,8 @@
 #include "lib/display.hpp"
 #include "launcer.hpp"
 #include "jerryscript.h"
+#include "lib/fs.h"
+#include "lfs.h"
 
 
 // SPI Defines
@@ -17,12 +19,17 @@
 #define PIN_SCK  18
 #define PIN_MOSI 19
 
+// Display
 pimoroni::UC8151 uc8151(296, 128, pimoroni::ROTATE_0);
 pimoroni::PicoGraphics_Pen1BitY graphics(uc8151.width, uc8151.height, nullptr);
 
-int main()
-{
+// FS
+lfs_t lfs;
+
+int main() {
     stdio_init_all();
+    // Init JS runtime
+    jerry_init (JERRY_INIT_EMPTY);
     // Init display
     spi_init(SPI_PORT, 1000*1000);
     gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
@@ -33,6 +40,35 @@ int main()
     gpio_put(PIN_CS, 1);
     // Do display init graphic
     init_display(uc8151, graphics);
+
+    graphics.set_pen(15);
+    graphics.clear();
+    graphics.set_pen(0);
+    pimoroni::Rect bg(296, 128, 296, 128);
+    graphics.rectangle(bg);
+
+    int mount_err = lfs_mount(&lfs, &fs_cfg);
+    if (mount_err) {
+        printf("Error mounting filesystem\n");
+        char err_str[10];
+        snprintf(err_str, sizeof(err_str), "%d", mount_err);
+        graphics.text(err_str, pimoroni::Point(10, 5), 2);
+        uc8151.update(&graphics);
+        int format_err = lfs_format(&lfs, &fs_cfg);
+        if (format_err) {
+             printf("Error formatting filesystem\n");
+            char err_str[10];
+            snprintf(err_str, sizeof(err_str), "%d", format_err);
+            graphics.text(err_str, pimoroni::Point(10, 7), 2);
+            uc8151.update(&graphics);
+        }
+        graphics.text("FS formatted", pimoroni::Point(10, 10), 2);
+        uc8151.update(&graphics);
+        lfs_mount(&lfs, &fs_cfg);
+    }
+    graphics.text("FS mounted", pimoroni::Point(10, 10), 2);
+    uc8151.update(&graphics);
+    sleep_ms(2000);
     // Load launcher
     Launcher::launcher_init(uc8151, graphics);
     while (true) {

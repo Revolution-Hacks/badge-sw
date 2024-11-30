@@ -4,3 +4,6 @@
 [submodule "external/JerryScript"]
 	path = external/JerryScript
 	url = https://github.com/hackclub/jerryscript-pico.git
+[submodule "external/littlefs"]
+	path = external/littlefs
+	url = https://github.com/littlefs-project/littlefs.git
