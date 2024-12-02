@@ -6,9 +6,11 @@
 #include "lib/display.hpp"
 #include "launcer.hpp"
 #include "jerryscript.h"
-#include "lib/fs.h"
+#include <pfs.h>
 #include "lfs.h"
 
+#define ROOT_SIZE 0x100000
+#define ROOT_OFFSET 0x100000
 
 // SPI Defines
 // We are going to use SPI 0, and allocate it to the following GPIO pins
@@ -22,9 +24,6 @@
 // Display
 pimoroni::UC8151 uc8151(296, 128, pimoroni::ROTATE_0);
 pimoroni::PicoGraphics_Pen1BitY graphics(uc8151.width, uc8151.height, nullptr);
-
-// FS
-lfs_t lfs;
 
 int main() {
     stdio_init_all();
@@ -40,35 +39,17 @@ int main() {
     gpio_put(PIN_CS, 1);
     // Do display init graphic
     init_display(uc8151, graphics);
-
-    graphics.set_pen(15);
-    graphics.clear();
-    graphics.set_pen(0);
-    pimoroni::Rect bg(296, 128, 296, 128);
-    graphics.rectangle(bg);
-
-    int mount_err = lfs_mount(&lfs, &fs_cfg);
-    if (mount_err) {
-        printf("Error mounting filesystem\n");
-        char err_str[10];
-        snprintf(err_str, sizeof(err_str), "%d", mount_err);
-        graphics.text(err_str, pimoroni::Point(10, 5), 2);
-        uc8151.update(&graphics);
-        int format_err = lfs_format(&lfs, &fs_cfg);
-        if (format_err) {
-             printf("Error formatting filesystem\n");
-            char err_str[10];
-            snprintf(err_str, sizeof(err_str), "%d", format_err);
-            graphics.text(err_str, pimoroni::Point(10, 7), 2);
-            uc8151.update(&graphics);
-        }
-        graphics.text("FS formatted", pimoroni::Point(10, 10), 2);
-        uc8151.update(&graphics);
-        lfs_mount(&lfs, &fs_cfg);
-    }
-    graphics.text("FS mounted", pimoroni::Point(10, 10), 2);
-    uc8151.update(&graphics);
-    sleep_ms(2000);
+    // Init FS
+    // FS
+    struct pfs_pfs *pfs;
+    struct lfs_config cfg;
+    printf("Mounting FS\n");
+    ffs_pico_createcfg (&cfg, ROOT_OFFSET, ROOT_SIZE);
+    printf("FS: created config\n");
+    pfs = pfs_ffs_create (&cfg);
+    printf("FS: fs created\n");
+    pfs_mount (pfs, "/");
+    printf("Mounted FS\n");
     // Load launcher
     Launcher::launcher_init(uc8151, graphics);
     while (true) {
