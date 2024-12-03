@@ -26,11 +26,13 @@ void handle_serial() {
                 break;
             }
             file_name[pos] = static_cast<char>(letter);
-            printf("letter: %d", file_name[pos]);
+            printf("letter: %c", file_name[pos]);
+            pos++;
         }
         file_name[pos] = '\0';
-        std::string file_name_str = std::string(file_name) + ".js";
-        printf("File name %d", file_name_str);
+        printf("file_name: %s\n", file_name);
+        std::string file_name_str = std::string(file_name) + std::string(".js");
+        printf("%s", file_name_str.c_str());
         FILE *file = fopen(file_name_str.c_str(), "w");
         if (file != nullptr) {
             fprintf(file, "test1234");
