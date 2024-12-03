@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "pico/multicore.h"
 #include "hardware/spi.h"
 #include "pico_graphics.hpp"
 #include "uc8151.hpp"
@@ -8,6 +9,7 @@
 #include "jerryscript.h"
 #include <pfs.h>
 #include "lfs.h"
+#include "lib/serial_api.hpp"
 
 #define ROOT_SIZE 0x100000
 #define ROOT_OFFSET 0x100000
@@ -25,6 +27,13 @@
 pimoroni::UC8151 uc8151(296, 128, pimoroni::ROTATE_0);
 pimoroni::PicoGraphics_Pen1BitY graphics(uc8151.width, uc8151.height, nullptr);
 
+void core2_main() {
+    while (1) {
+        printf("Core 2\n");
+        handle_serial();
+    }   
+}
+
 int main() {
     stdio_init_all();
     // Init JS runtime
@@ -39,8 +48,7 @@ int main() {
     gpio_put(PIN_CS, 1);
     // Do display init graphic
     init_display(uc8151, graphics);
-    // Init FS
-    // FS
+    // Init file system
     struct pfs_pfs *pfs;
     struct lfs_config cfg;
     printf("Mounting FS\n");
@@ -50,10 +58,12 @@ int main() {
     printf("FS: fs created\n");
     pfs_mount (pfs, "/");
     printf("Mounted FS\n");
+    // Launch core 2 for serial output
+    while (!stdio_usb_connected()) {} // Wait until USB connected
+    multicore_launch_core1(core2_main);
     // Load launcher
     Launcher::launcher_init(uc8151, graphics);
     while (true) {
-        printf("Hello, world!\n");
-        sleep_ms(1000);
+        // Loop to stop the microcontroller stopping, implement actual logic here
     }
 }

@@ -17,7 +17,7 @@ namespace Launcher {
         // Do Text in corner
         //graphics.set_font(&DMSANS_SEMIBOLD_75_bitmap);
         graphics.text("Revolution", pimoroni::Point(5, 1), 10, 2);
-        FILE *file = fopen("test.js", "w");
+/*         FILE *file = fopen("test.js", "w");
         if (file != nullptr) {
             fprintf(file, "test1234");
             fclose(file);
@@ -27,7 +27,7 @@ namespace Launcher {
         auto files = FileList::list_js_files("/");
         for (auto file : files.files) {
             printf("File: %s\n", file.c_str());
-        }
+        } */
         // Loop through launcher items
         // Draw each item
         Launcher::launcher_draw_box(graphics, "BIO", 25);
