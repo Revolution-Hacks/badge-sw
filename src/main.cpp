@@ -29,7 +29,6 @@ pimoroni::PicoGraphics_Pen1BitY graphics(uc8151.width, uc8151.height, nullptr);
 
 void core2_main() {
     while (1) {
-        printf("Core 2\n");
         handle_serial();
     }   
 }

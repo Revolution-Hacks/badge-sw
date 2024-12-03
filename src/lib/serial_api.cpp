@@ -1,43 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <string>
 #include "pico/stdlib.h"
+#include "pfs.h"
 
-int INSTRUCTION = -1; // -1 for not set, 0 for create, 1 for delete
 enum INSTRUCTION_TYPE {
     NOT_SET = -1,
-    CREATE = 0,
+    CREATE = 48, // ASCII 0
     DELETE = 1
 };
 
 void handle_serial() {
-    char buffer[128]; // Buffer to store user input
-    printf("Instruction: ");
-    // Prompt user for the instruction
-    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-        printf("Error reading input\n");
-        return;
-    }
-
-    // Strip newline characters
-    buffer[strcspn(buffer, "\r\n")] = '\0';
-    if (INSTRUCTION == CREATE) {
-        char name[100];
-
-        // Prompt user for the file name
-        printf("Enter name: ");
-        if (fgets(name, sizeof(name), stdin) == NULL) {
-            printf("Error reading input\n");
-            return;
+    printf("cmd_ready");
+    int ch = getchar(); // Read a character from stdin
+    printf("%d\n", ch);
+    if (ch != EOF) {
+        printf("ready\n");
+        char file_name[20] = {0}; // Initialize buffer with zeros
+        int pos = 0; // Position in buffer
+        
+        while (pos < sizeof(file_name) - 1) { // Leave space for null terminator
+            int letter = getchar();
+            if (letter == ' ' || letter == '\n' || letter == EOF) {
+                break;
+            }
+            file_name[pos] = static_cast<char>(letter);
+            printf("letter: %d", file_name[pos]);
         }
-
-        // Remove the newline character from the input
-        name[strcspn(name, "\n")] = '\0';
-
-        printf("data_send: %s\n", name); // Process the name
-    } else if (INSTRUCTION == DELETE) {
-        printf("Deleting file system\n");
-    } else {
-        printf("Invalid instruction\n");
+        file_name[pos] = '\0';
+        std::string file_name_str = std::string(file_name) + ".js";
+        printf("File name %d", file_name_str);
+        FILE *file = fopen(file_name_str.c_str(), "w");
+        if (file != nullptr) {
+            fprintf(file, "test1234");
+            fclose(file);
+        } else {
+            printf("Failed to open file\n");
+        }
     }
 }

@@ -23,11 +23,11 @@ namespace Launcher {
             fclose(file);
         } else {
             printf("Failed to open file\n");
-        }
+        } */
         auto files = FileList::list_js_files("/");
         for (auto file : files.files) {
             printf("File: %s\n", file.c_str());
-        } */
+        }
         // Loop through launcher items
         // Draw each item
         Launcher::launcher_draw_box(graphics, "BIO", 25);
