@@ -59,7 +59,6 @@ pico_enable_stdio_usb(badge-sw 1)
 # Add the standard library to the build
 target_link_libraries(badge-sw
         pico_stdlib
-        littlefs
     )
 
 # Add the standard include files to the build
