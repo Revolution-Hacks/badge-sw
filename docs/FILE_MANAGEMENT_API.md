@@ -3,6 +3,7 @@
 ## Capabilities
 - Upload file
 - Delete file
+- Read file
 
 # Jobs
 ## General
@@ -15,13 +16,15 @@ device -> ready
 client -> <file name>
 device -> data_send
 client -> <file data>
-device -> ack
-client -> <CRC checksum>
-device -> Success | Error
 ```
 
 ## Delete file
 ```
 delete <file name>
-device -> ack
+```
+
+## Read file
+```
+client -> <file name>
+device -> DATA
 ```
