@@ -10,35 +10,45 @@ enum INSTRUCTION_TYPE {
     CREATE = 48, // ASCII 0
     DELETE = 1
 };
+int INSTRUCTION = NOT_SET;
+
+std::string handle_longer_input(int buffer_length) {
+    char data[buffer_length] = {0};
+    int pos = 0;
+    while (pos < sizeof(data) - 1) {
+        int letter = getchar();
+        if (letter == '#' || letter == '\n' || letter == EOF) {
+            printf("Breaking character loop!\n");
+             break;
+        }
+        data[pos] = static_cast<char>(letter);
+        pos++;
+        sleep_ms(20);
+    }
+    data[pos] = '\0';
+    std::string data_str(data);
+    return data_str.c_str();
+}
 
 void handle_serial() {
     printf("cmd_ready");
-    int ch = getchar(); // Read a character from stdin
+    int ch = getchar();
     printf("%d\n", ch);
-    if (ch != EOF) {
+    if (ch != EOF && ch == CREATE) {
         printf("ready\n");
-        char file_name[20] = {0}; // Initialize buffer with zeros
-        int pos = 0; // Position in buffer
-        
-        while (pos < sizeof(file_name) - 1) { // Leave space for null terminator
-            int letter = getchar();
-            if (letter == ' ' || letter == '\n' || letter == EOF) {
-                break;
-            }
-            file_name[pos] = static_cast<char>(letter);
-            printf("letter: %c", file_name[pos]);
-            pos++;
-        }
-        file_name[pos] = '\0';
-        printf("file_name: %s\n", file_name);
-        std::string file_name_str = std::string(file_name) + std::string(".js");
-        printf("%s", file_name_str.c_str());
+        std::string file_name_str = handle_longer_input(20);
+        printf("data_send\n");
+        std::string data_str = handle_longer_input(100);
+        printf("Data received: %s\n", data_str.c_str());
         FILE *file = fopen(file_name_str.c_str(), "w");
         if (file != nullptr) {
-            fprintf(file, "test1234");
+            fprintf(file, data_str.c_str());
             fclose(file);
+            printf("File created successfully\n");
         } else {
             printf("Failed to open file\n");
         }
+    } else {
+        printf("Invalid command or EOF encountered\n");
     }
 }
