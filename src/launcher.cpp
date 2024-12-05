@@ -16,7 +16,7 @@ namespace Launcher {
         graphics.rectangle(bg);
         // Do Text in corner
         //graphics.set_font(&DMSANS_SEMIBOLD_75_bitmap);
-        graphics.text("Revolution", pimoroni::Point(5, 1), 10, 2);
+        graphics.text("Revolution 2024", pimoroni::Point(5, 1), 10, 2);
 /*         FILE *file = fopen("test.js", "w");
         if (file != nullptr) {
             fprintf(file, "test1234");
