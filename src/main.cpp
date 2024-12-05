@@ -27,7 +27,20 @@
 pimoroni::UC8151 uc8151(296, 128, pimoroni::ROTATE_0);
 pimoroni::PicoGraphics_Pen1BitY graphics(uc8151.width, uc8151.height, nullptr);
 
+void init_fs() {
+    struct pfs_pfs *pfs;
+    struct lfs_config cfg;
+    printf("Mounting FS\n");
+    ffs_pico_createcfg (&cfg, ROOT_OFFSET, ROOT_SIZE);
+    printf("FS: created config\n");
+    pfs = pfs_ffs_create (&cfg);
+    printf("FS: fs created\n");
+    pfs_mount (pfs, "/");
+    printf("Mounted FS\n");
+}
+
 void core2_main() {
+    init_fs();
     while (1) {
         handle_serial();
     }   
@@ -48,20 +61,11 @@ int main() {
     // Do display init graphic
     init_display(uc8151, graphics);
     // Init file system
-    struct pfs_pfs *pfs;
-    struct lfs_config cfg;
-    printf("Mounting FS\n");
-    ffs_pico_createcfg (&cfg, ROOT_OFFSET, ROOT_SIZE);
-    printf("FS: created config\n");
-    pfs = pfs_ffs_create (&cfg);
-    printf("FS: fs created\n");
-    pfs_mount (pfs, "/");
-    printf("Mounted FS\n");
-    // Launch core 2 for serial output
-    while (!stdio_usb_connected()) {} // Wait until USB connected
-    multicore_launch_core1(core2_main);
+    init_fs();
     // Load launcher
     Launcher::launcher_init(uc8151, graphics);
+    // Launch core 2 for serial output
+    multicore_launch_core1(core2_main);
     while (true) {
         // Loop to stop the microcontroller stopping, implement actual logic here
     }
